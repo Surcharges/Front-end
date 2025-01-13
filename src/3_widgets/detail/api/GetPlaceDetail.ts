@@ -3,7 +3,7 @@ import { SurchargesStatusDTO } from '@entities/surcharges'
 import { AddressComponentsDTO } from '@entities/place'
 import { Timestamp } from 'firebase/firestore'
 
-export async function GetPlaceDetail(id: string): Promise<PlaceDTO> {
+export async function GetPlaceDetail(id: string): Promise<GetPlaceDetailResponse> {
 
   const baseURL = import.meta.env.VITE_BASE_URL
 

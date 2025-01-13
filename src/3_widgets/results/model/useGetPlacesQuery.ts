@@ -1,11 +1,11 @@
 import { useQuery } from "react-query"
-import { SearchPlaces } from "../api/SearchPlaces"
+import { GetPlaces } from "../api/GetPlaces"
 
 export const useGetPlacesQuery = (searchText: string, nextPageToken?: string) => {
   return useQuery({
     queryKey: ['places', searchText],
     retry: false,
-    queryFn: () => SearchPlaces(searchText, nextPageToken),
+    queryFn: () => GetPlaces(searchText, nextPageToken),
     refetchOnWindowFocus: false,
     refetchOnMount: false
   })

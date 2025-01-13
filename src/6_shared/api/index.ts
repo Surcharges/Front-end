@@ -1,1 +1,2 @@
-// export { analytics, database } from "./firebase/firebase"
+export { analytics } from "./firebase/Firebase"
+export { auth } from "./firebase/Firebase"

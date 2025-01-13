@@ -1,9 +1,9 @@
-import { PlaceUI } from "@entities/place"
+import { PlaceListUI } from "@entities/result"
 
 import { PlaceItem } from "./PlaceItem"
 
 interface PlacesListProps {
-  places: PlaceUI[]
+  places: PlaceListUI[]
   selectedPlace: (id: string) => void
 }
 
@@ -16,10 +16,10 @@ export default function PlacesList({ places, selectedPlace }: PlacesListProps) {
   return (
     <div className='flex flex-col items-center justify-center mt-10 mb-10'>
       {
-        places && places.map((place: PlaceUI) => (
+        places && places.map((place: PlaceListUI) => (
           <PlaceItem
-            place={place}
-            key={place.id}
+            item={place}
+            key={place.place.id}
             onClick={(id) =>
               handleOnClick(id)
             }

@@ -1,26 +1,26 @@
-import { PlaceUI } from "@entities/place"
+import { PlaceListUI } from "@entities/result"
 import { SurchargesStatusUI } from "@entities/surcharges"
 
 interface PlaceItemProps {
-  place: PlaceUI
+  item: PlaceListUI
   onClick: (id: string) => void
 }
 
-export function PlaceItem({ place, onClick }: PlaceItemProps) {
+export function PlaceItem({ item, onClick }: PlaceItemProps) {
   return (
     <div
       className='flex flex-col items-center justify-center rounded-md p-2 m-2 cursor-pointer hover:bg-gray-200'
-      onClick={() => onClick(place.id)}
+      onClick={() => onClick(item.place.id)}
     >
       <div className='flex items-center font-bold gap-2'>
-        <p>{place.name}</p>
+        <p>{item.place.name}</p>
         <SurchargesBadge
-          status={place.surcharges.status}
-          rate={place.surcharges.rate}
+          status={item.surcharges.status}
+          rate={item.surcharges.rate}
         />
       </div>
       <div className='text-center'>
-        <p>{place.address}</p>
+        <p>{item.place.address}</p>
       </div>
     </div>
   )

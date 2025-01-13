@@ -1,4 +1,3 @@
 export { MakeAddress } from "./makeAddress/MakeAddress"
 export { SecondsToDate } from "./dateFormatter/SecondsToDate"
-
-export { analytics } from "./firebase/Firebase"
+export { useAuth, AuthContextProvider } from "./authContext/AuthContext"
