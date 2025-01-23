@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { NavigationBar } from './components/NavigationBar';
+import Search from "./components/Search";
 import { useAuth } from '@shared/model';
 
 // Define the surcharge type
@@ -17,10 +18,9 @@ interface Surcharge {
 export function DashBoard() {
   const {user} = useAuth();
   const [surcharges, setSurcharges] = useState<Surcharge[]>([]);
-  const [filteredSurcharges, setFilteredSurcharges] = useState<Surcharge[]>([]);
+  const [searchedSurcharges, setSearchedSurcharges] = useState<Surcharge[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [filter, setFilter] = useState<'REPORTED' | 'CONFIRMED'>('REPORTED'); // Default to "REPORTED"
 
   useEffect(() => {
     const fetchSurcharges = async () => {
@@ -54,9 +54,10 @@ export function DashBoard() {
         }));
 
         setSurcharges(formattedSurcharges);
-        setFilteredSurcharges(
-          formattedSurcharges.filter((surcharge) => surcharge.surchargeStatus === 'REPORTED')
-        );
+
+        setSearchedSurcharges(
+          formattedSurcharges
+        )
       } catch (err) {
         if (err instanceof Error) {
           setError(err.message);
@@ -68,24 +69,27 @@ export function DashBoard() {
       }
     };
 
-    
-
     fetchSurcharges();
   }, []);
-
-  // console.log(surcharges);
-  // console.log(filteredSurcharges);
-
-  const handleFilterChange = (newFilter: 'REPORTED' | 'CONFIRMED') => {
-    setFilter(newFilter);
-    if (newFilter === 'REPORTED') {
-      setFilteredSurcharges(surcharges.filter((surcharge) => surcharge.surchargeStatus === 'REPORTED'));
-    } else {
-      setFilteredSurcharges(surcharges.filter((surcharge) => surcharge.surchargeStatus === 'CONFIRMED'));
-    }
+  
+  const handleSearchChange = (newFilter: string) => {
+    surcharges.forEach(surcharge => {
+      if (surcharge.rate === Number(newFilter)) {
+        setSearchedSurcharges(surcharges.filter((surcharge) => surcharge.rate === Number(newFilter)));
+      } else if (surcharge.surchargeAmount === Number(newFilter)){
+        setSearchedSurcharges(surcharges.filter((surcharge) => surcharge.surchargeAmount === Number(newFilter)));
+      } else if (surcharge.totalAmount === Number(newFilter)){
+        setSearchedSurcharges(surcharges.filter((surcharge) => surcharge.totalAmount === Number(newFilter)));
+      } else if (surcharge.surchargeStatus === newFilter){
+        setSearchedSurcharges(surcharges.filter((surcharge) => surcharge.surchargeStatus === newFilter));
+      } else if (surcharge.id === newFilter){
+        setSearchedSurcharges(surcharges.filter((surcharge) => surcharge.id === newFilter));
+      }
+    });
   };
 
-  const confirmSurcharge = async (id: string, surchargeAmount: number, totalAmount: number  ) => {
+  const confirmSurcharge = async (id: string, surchargeAmount?: number, totalAmount?: number  ) => {
+    console.log(id, surchargeAmount, totalAmount)
     try {
       const baseURL = import.meta.env.VITE_BASE_URL;
       const token = user ? await user.getIdToken() : ''; // Resolve the token to a string
@@ -122,6 +126,9 @@ export function DashBoard() {
       <div>
         <NavigationBar />
       </div>
+      <div className="flex flex-col items-center">
+        <Search onSearch={handleSearchChange} />
+      </div>
       <div className="mt-4">
         {loading ? (
           <p>Loading surcharges...</p>
@@ -131,33 +138,18 @@ export function DashBoard() {
           <div>
             <div className="flex justify-between mb-4">
               <h2 className="text-lg font-bold">Surcharges: </h2>
-              <div>
-                <button
-                  className={`px-4 py-2 mr-2 ${
-                    filter === 'REPORTED' ? 'bg-blue-500 text-white' : 'bg-gray-300 text-black'
-                  } rounded`}
-                  onClick={() => handleFilterChange('REPORTED')}
-                >
-                  Show Reported
-                </button>
-                <button
-                  className={`px-4 py-2 ${
-                    filter === 'CONFIRMED' ? 'bg-blue-500 text-white' : 'bg-gray-300 text-black'
-                  } rounded`}
-                  onClick={() => handleFilterChange('CONFIRMED')}
-                >
-                  Show Confirmed
-                </button>
-              </div>
+              
             </div>
-            {filteredSurcharges.length === 0 ? (
+            {searchedSurcharges.length === 0 ? (
               <p>No surcharge records match the selected filter.</p>
             ) : (
               <ul className="list-disc pl-6">
-                {filteredSurcharges.map((surcharge, index) => (
+                {searchedSurcharges.map((surcharge, index) => (
                   <li key={index} className="mb-4">
                     <div>
-                    
+                      <p>
+                        <strong>ID:</strong> {surcharge.id}
+                      </p>
                       <p>
                         <strong>Rate:</strong> {surcharge.rate}
                       </p>
