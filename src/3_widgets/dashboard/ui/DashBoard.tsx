@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { NavigationBar } from './components/NavigationBar';
-import Search from "./components/Search";
 import { useAuth } from '@shared/model';
+import Search from "./components/Search";
+import ConfirmationModal from './components/ConfirmationModal';
 
 // Define the surcharge type
 interface Surcharge {
@@ -15,12 +16,16 @@ interface Surcharge {
   surchargeStatus: string;
 }
 
+// interface Place
+
 export function DashBoard() {
   const {user} = useAuth();
   const [surcharges, setSurcharges] = useState<Surcharge[]>([]);
   const [searchedSurcharges, setSearchedSurcharges] = useState<Surcharge[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
+  const [imageName, setImageName] = useState<string | undefined>(undefined)
 
   useEffect(() => {
     const fetchSurcharges = async () => {
@@ -45,7 +50,7 @@ export function DashBoard() {
         const formattedSurcharges: Surcharge[] = allSurcharges.map((surcharge: any) => ({
           id: surcharge.id,
           image: surcharge.image,
-          placeInformation: surcharge.placeInformation,
+          // getPlace: getPlace(surcharge.id).displayName.name,
           rate: surcharge.rate,
           reportedDate: surcharge.reportedDate,
           totalAmount: surcharge.totalAmount,
@@ -84,11 +89,20 @@ export function DashBoard() {
         setSearchedSurcharges(surcharges.filter((surcharge) => surcharge.surchargeStatus === newFilter));
       } else if (surcharge.id === newFilter){
         setSearchedSurcharges(surcharges.filter((surcharge) => surcharge.id === newFilter));
-      }
+      } 
     });
   };
 
-  const confirmSurcharge = async (id: string, surchargeAmount?: number, totalAmount?: number  ) => {
+  function openConfirmationModal(id: string, surchargeAmount?: number, totalAmount?: number, imageName?: string) {
+    setConfirmationModalOpen(true);
+    setImageName(imageName)
+  }
+
+  function closeConfirmationModal() {
+    setConfirmationModalOpen(false);
+  }
+
+  const confirmSurcharge = async (id: string, surchargeAmount?: number, totalAmount?: number) => {
     console.log(id, surchargeAmount, totalAmount)
     try {
       const baseURL = import.meta.env.VITE_BASE_URL;
@@ -111,6 +125,7 @@ export function DashBoard() {
       if (!response.ok) {
         throw new Error(`Error confirming surcharge: ${response.statusText}`);
       }
+      window.location.reload();
 
     } catch (err) {
       if (err instanceof Error) {
@@ -158,19 +173,28 @@ export function DashBoard() {
                         {new Date(surcharge.reportedDate).toLocaleDateString()}
                       </p>
                       <p>
-                        <strong>Total Amount:</strong> ${surcharge.totalAmount}
+                        <strong>Surcharge Amount:</strong> ${surcharge.surchargeAmount}
                       </p>
                       <p>
-                        <strong>Surcharge Amount:</strong> ${surcharge.surchargeAmount}
+                        <strong>Total Amount:</strong> ${surcharge.totalAmount}
                       </p>
                       <p>
                         <strong>Status:</strong> {surcharge.surchargeStatus}
                       </p>
-                      <button className={`px-4 py-2 bg-blue-500 text-white rounded`}
-                          onClick={() => confirmSurcharge(surcharge.id, surcharge.surchargeAmount, surcharge.totalAmount)}
-                        >
-                      Process surcharge
+                      <button
+                        className="px-4 py-2 bg-blue-500 text-white rounded"
+                        onClick={() => openConfirmationModal(surcharge.id, surcharge.surchargeAmount, surcharge.totalAmount, surcharge.image)}>
+                        Process surcharge
                       </button>
+                      {confirmationModalOpen && (
+                        <ConfirmationModal
+                        imageName={imageName}
+                        isOpen={confirmationModalOpen}
+                        onClose={closeConfirmationModal}
+                        onConfirm={(newSurchargeAmount: number | undefined, newTotalAmount: number | undefined) =>
+                        confirmSurcharge(surcharge.id, newSurchargeAmount, newTotalAmount)}
+                        />
+                      )}
                     </div>
                   </li>
                 ))}
