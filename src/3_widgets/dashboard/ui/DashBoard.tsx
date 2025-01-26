@@ -4,7 +4,6 @@ import { useAuth } from '@shared/model';
 import Search from "./components/Search";
 import ConfirmationModal from './components/ConfirmationModal';
 
-// Define the surcharge type
 interface Surcharge {
   id: string,
   image: string;
@@ -15,8 +14,6 @@ interface Surcharge {
   surchargeAmount: number;
   surchargeStatus: string;
 }
-
-// interface Place
 
 export function DashBoard() {
   const {user} = useAuth();
@@ -102,8 +99,8 @@ export function DashBoard() {
     setConfirmationModalOpen(false);
   }
 
-  const confirmSurcharge = async (id: string, surchargeAmount?: number, totalAmount?: number) => {
-    console.log(id, surchargeAmount, totalAmount)
+  const confirmSurcharge = async (id: string, action: string, surchargeAmount?: number, totalAmount?: number, ) => {
+    console.log(id, surchargeAmount, totalAmount, action)
     try {
       const baseURL = import.meta.env.VITE_BASE_URL;
       const token = user ? await user.getIdToken() : ''; // Resolve the token to a string
@@ -113,6 +110,7 @@ export function DashBoard() {
           id: id,
           surchargeAmount: surchargeAmount,
           totalAmount: totalAmount,
+          action: action
         }),
         method: 'PUT',
         headers: {
@@ -159,8 +157,8 @@ export function DashBoard() {
               <p>No surcharge records match the selected filter.</p>
             ) : (
               <ul className="list-disc pl-6">
-                {searchedSurcharges.map((surcharge, index) => (
-                  <li key={index} className="mb-4">
+                {searchedSurcharges.map(surcharge => (
+                  <li key={surcharge.id} className="mb-4">
                     <div>
                       <p>
                         <strong>ID:</strong> {surcharge.id}
@@ -191,8 +189,8 @@ export function DashBoard() {
                         imageName={imageName}
                         isOpen={confirmationModalOpen}
                         onClose={closeConfirmationModal}
-                        onConfirm={(newSurchargeAmount: number | undefined, newTotalAmount: number | undefined) =>
-                        confirmSurcharge(surcharge.id, newSurchargeAmount, newTotalAmount)}
+                        onConfirm={(newSurchargeAmount: number | undefined, newTotalAmount: number | undefined, action) =>
+                        confirmSurcharge(surcharge.id, action, newSurchargeAmount, newTotalAmount)}
                         />
                       )}
                     </div>

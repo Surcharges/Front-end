@@ -5,7 +5,7 @@ interface Props {
   imageName: string | undefined;
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: (newSurchargeAmount: number | undefined, newTotalAmount: number | undefined) => Promise<void>;
+  onConfirm: (newSurchargeAmount: number | undefined, newTotalAmount: number | undefined, action: string) => Promise<void>;
 }
 
 const ConfirmationModal: React.FC<Props> = ({ imageName, isOpen, onClose, onConfirm }) => {
@@ -97,11 +97,18 @@ const ConfirmationModal: React.FC<Props> = ({ imageName, isOpen, onClose, onConf
           Close
         </Button>
         <Button
-          onClick={() => onConfirm(Number(newSurchargeAmount), Number(newTotalAmount))}
+          onClick={() => onConfirm(Number(newSurchargeAmount), Number(newTotalAmount), "CONFIRM")}
           color="primary"
           variant="contained"
         >
           Confirm Surcharge
+        </Button>
+        <Button
+          onClick={() => onConfirm(Number(newSurchargeAmount), Number(newTotalAmount), "REJECT")}
+          color="secondary"
+          variant="contained"
+        >
+          Reject Surcharge
         </Button>
       </DialogActions>
     </Dialog>
