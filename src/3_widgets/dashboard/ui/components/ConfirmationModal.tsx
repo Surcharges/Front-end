@@ -2,13 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { Button, TextField, Dialog, DialogTitle, DialogContent, DialogActions, CircularProgress, Box } from '@mui/material';
 
 interface Props {
+  status: string
+  surchargeId: string;
   imageName: string | undefined;
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: (newSurchargeAmount: number | undefined, newTotalAmount: number | undefined, action: string) => Promise<void>;
+  onConfirm: (surchargeId: string, newSurchargeAmount: number | undefined, newTotalAmount: number | undefined, action: string) => Promise<void>;
 }
 
-const ConfirmationModal: React.FC<Props> = ({ imageName, isOpen, onClose, onConfirm }) => {
+const ConfirmationModal: React.FC<Props> = ({status, surchargeId, imageName, isOpen, onClose, onConfirm }) => {
   const [newSurchargeAmount, setNewSurchargeAmount] = useState('');
   const [newTotalAmount, setNewTotalAmount] = useState('');
   const [imageBase64, setImageBase64] = useState<string | null>(null);
@@ -20,7 +22,7 @@ const ConfirmationModal: React.FC<Props> = ({ imageName, isOpen, onClose, onConf
         setLoadingImage(true);
         try {
           const baseURL = import.meta.env.VITE_BASE_URL;
-          const response = await fetch(`${baseURL}/api/image?image=${imageName}`, {
+          const response = await fetch(`${baseURL}/api/image?image=${imageName}`, {  // TODO: api -> admin
             method: 'GET',
             headers: {
               Accept: 'application/json',
@@ -55,6 +57,58 @@ const ConfirmationModal: React.FC<Props> = ({ imageName, isOpen, onClose, onConf
   ) => {
     setFunction(e.target.value);
   };
+
+  function renderContent() {
+    if (status === "REPORTED") {
+      return (
+        <>
+          <Button
+            onClick={() =>
+              onConfirm(surchargeId, Number(newSurchargeAmount), Number(newTotalAmount), "CONFIRM")
+            }
+            color="primary"
+            variant="contained"
+          >
+            Confirm Surcharge
+          </Button>
+          <Button
+            onClick={() =>
+              onConfirm(surchargeId, Number(newSurchargeAmount), Number(newTotalAmount), "REJECT")
+            }
+            color="secondary"
+            variant="contained"
+          >
+            Reject Surcharge
+          </Button>
+        </>
+      );
+    } else if (status === "CONFIRMED") {
+      return (
+        <Button
+          onClick={() =>
+            onConfirm(surchargeId, Number(newSurchargeAmount), Number(newTotalAmount), "REJECT")
+          }
+          color="secondary"
+          variant="contained"
+        >
+          Reject Surcharge
+        </Button>
+      );
+    } else if (status === "REJECTED") {
+      return (
+        <Button
+          onClick={() =>
+            onConfirm(surchargeId, Number(newSurchargeAmount), Number(newTotalAmount), "CONFIRM")
+          }
+          color="primary"
+          variant="contained"
+        >
+          Confirm Surcharge
+        </Button>
+      );
+    }
+  }
+  
 
   return (
     <Dialog open={isOpen} onClose={onClose} maxWidth="sm" fullWidth>
@@ -96,20 +150,7 @@ const ConfirmationModal: React.FC<Props> = ({ imageName, isOpen, onClose, onConf
         <Button onClick={onClose} color="secondary" variant="outlined">
           Close
         </Button>
-        <Button
-          onClick={() => onConfirm(Number(newSurchargeAmount), Number(newTotalAmount), "CONFIRM")}
-          color="primary"
-          variant="contained"
-        >
-          Confirm Surcharge
-        </Button>
-        <Button
-          onClick={() => onConfirm(Number(newSurchargeAmount), Number(newTotalAmount), "REJECT")}
-          color="secondary"
-          variant="contained"
-        >
-          Reject Surcharge
-        </Button>
+        {renderContent()}
       </DialogActions>
     </Dialog>
   );
