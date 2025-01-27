@@ -7,7 +7,7 @@ interface Props {
   imageName: string | undefined;
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: (surchargeId: string, newSurchargeAmount: number | undefined, newTotalAmount: number | undefined, action: string) => Promise<void>;
+  onConfirm: (surchargeId: string, action: string, newSurchargeAmount: number | undefined, newTotalAmount: number | undefined) => Promise<void>;
 }
 
 const ConfirmationModal: React.FC<Props> = ({status, surchargeId, imageName, isOpen, onClose, onConfirm }) => {
@@ -64,7 +64,7 @@ const ConfirmationModal: React.FC<Props> = ({status, surchargeId, imageName, isO
         <>
           <Button
             onClick={() =>
-              onConfirm(surchargeId, Number(newSurchargeAmount), Number(newTotalAmount), "CONFIRM")
+              onConfirm(surchargeId, "CONFIRM", Number(newSurchargeAmount), Number(newTotalAmount))
             }
             color="primary"
             variant="contained"
@@ -73,7 +73,7 @@ const ConfirmationModal: React.FC<Props> = ({status, surchargeId, imageName, isO
           </Button>
           <Button
             onClick={() =>
-              onConfirm(surchargeId, Number(newSurchargeAmount), Number(newTotalAmount), "REJECT")
+              onConfirm(surchargeId, "REJECT", Number(newSurchargeAmount), Number(newTotalAmount))
             }
             color="secondary"
             variant="contained"
@@ -86,7 +86,7 @@ const ConfirmationModal: React.FC<Props> = ({status, surchargeId, imageName, isO
       return (
         <Button
           onClick={() =>
-            onConfirm(surchargeId, Number(newSurchargeAmount), Number(newTotalAmount), "REJECT")
+            onConfirm(surchargeId, "REJECT", Number(newSurchargeAmount), Number(newTotalAmount))
           }
           color="secondary"
           variant="contained"
@@ -98,7 +98,7 @@ const ConfirmationModal: React.FC<Props> = ({status, surchargeId, imageName, isO
       return (
         <Button
           onClick={() =>
-            onConfirm(surchargeId, Number(newSurchargeAmount), Number(newTotalAmount), "CONFIRM")
+            onConfirm(surchargeId, "CONFIRM", Number(newSurchargeAmount), Number(newTotalAmount))
           }
           color="primary"
           variant="contained"

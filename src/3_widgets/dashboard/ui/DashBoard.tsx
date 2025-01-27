@@ -1,13 +1,13 @@
-import { useEffect, useState } from 'react';
-import { NavigationBar } from './components/NavigationBar';
-import { useAuth } from '@shared/model';
+import { useEffect, useState } from "react";
+import { NavigationBar } from "./components/NavigationBar";
+import { useAuth } from "@shared/model";
 import Search from "./components/Search";
-import ConfirmationModal from './components/ConfirmationModal';
+import ConfirmationModal from "./components/ConfirmationModal";
 
 interface Surcharge {
-  id: string,
+  id: string;
   image: string;
-  placeInformation: string;
+  placeInformation?: string; // Optional as it's not always set
   rate: number;
   reportedDate: number; // Assuming this is a timestamp in milliseconds
   totalAmount: number;
@@ -16,25 +16,27 @@ interface Surcharge {
 }
 
 export function DashBoard() {
-  const {user} = useAuth();
+  const { user } = useAuth();
   const [surcharges, setSurcharges] = useState<Surcharge[]>([]);
   const [searchedSurcharges, setSearchedSurcharges] = useState<Surcharge[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
-  const [imageName, setImageName] = useState<string | undefined>(undefined)
+  const [selectedSurcharge, setSelectedSurcharge] = useState<Surcharge | null>(
+    null
+  );
 
   useEffect(() => {
     const fetchSurcharges = async () => {
       try {
         const baseURL = import.meta.env.VITE_BASE_URL;
-        const token = user ? await user.getIdToken() : ''; // Resolve the token to a string
-        
+        const token = user ? await user.getIdToken() : "";
+
         const response = await fetch(`${baseURL}/api/surcharges`, {
-          method: 'GET',
+          method: "GET",
           headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
+            Accept: "application/json",
+            "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
         });
@@ -44,78 +46,78 @@ export function DashBoard() {
         }
 
         const allSurcharges = await response.json();
-        const formattedSurcharges: Surcharge[] = allSurcharges.map((surcharge: any) => ({
-          id: surcharge.id,
-          image: surcharge.image,
-          // getPlace: getPlace(surcharge.id).displayName.name,
-          rate: surcharge.rate,
-          reportedDate: surcharge.reportedDate,
-          totalAmount: surcharge.totalAmount,
-          surchargeAmount: surcharge.surchargeAmount,
-          surchargeStatus: surcharge.surchargeStatus,
-        }));
+        const formattedSurcharges: Surcharge[] = allSurcharges.map(
+          (surcharge: any) => ({
+            id: surcharge.id,
+            image: surcharge.image,
+            rate: surcharge.rate,
+            reportedDate: surcharge.reportedDate,
+            totalAmount: surcharge.totalAmount,
+            surchargeAmount: surcharge.surchargeAmount,
+            surchargeStatus: surcharge.surchargeStatus,
+          })
+        );
 
         setSurcharges(formattedSurcharges);
-
-        setSearchedSurcharges(
-          formattedSurcharges
-        )
+        setSearchedSurcharges(formattedSurcharges);
       } catch (err) {
-        if (err instanceof Error) {
-          setError(err.message);
-        } else {
-          setError('An unknown error occurred fetching surcharges');
-        }
+        setError(
+          err instanceof Error
+            ? err.message
+            : "An unknown error occurred while fetching surcharges"
+        );
       } finally {
         setLoading(false);
       }
     };
 
     fetchSurcharges();
-  }, []);
-  
+  }, [user]);
+
   const handleSearchChange = (newFilter: string) => {
-    surcharges.forEach(surcharge => {
-      if (surcharge.rate === Number(newFilter)) {
-        setSearchedSurcharges(surcharges.filter((surcharge) => surcharge.rate === Number(newFilter)));
-      } else if (surcharge.surchargeAmount === Number(newFilter)){
-        setSearchedSurcharges(surcharges.filter((surcharge) => surcharge.surchargeAmount === Number(newFilter)));
-      } else if (surcharge.totalAmount === Number(newFilter)){
-        setSearchedSurcharges(surcharges.filter((surcharge) => surcharge.totalAmount === Number(newFilter)));
-      } else if (surcharge.surchargeStatus === newFilter){
-        setSearchedSurcharges(surcharges.filter((surcharge) => surcharge.surchargeStatus === newFilter));
-      } else if (surcharge.id === newFilter){
-        setSearchedSurcharges(surcharges.filter((surcharge) => surcharge.id === newFilter));
-      } 
-    });
+    const filterValue = newFilter.toLowerCase();
+    const filteredSurcharges = surcharges.filter(
+      (surcharge) =>
+        surcharge.id.toLowerCase().includes(filterValue) ||
+        surcharge.surchargeStatus.toLowerCase().includes(filterValue) ||
+        surcharge.rate.toString() === filterValue ||
+        surcharge.totalAmount.toString() === filterValue ||
+        surcharge.surchargeAmount.toString() === filterValue
+    );
+    setSearchedSurcharges(filteredSurcharges);
   };
 
-  function openConfirmationModal(id: string, surchargeAmount?: number, totalAmount?: number, imageName?: string) {
+  const openConfirmationModal = (surcharge: Surcharge) => {
+    setSelectedSurcharge(surcharge);
     setConfirmationModalOpen(true);
-    setImageName(imageName)
-  }
+  };
 
-  function closeConfirmationModal() {
+  const closeConfirmationModal = () => {
     setConfirmationModalOpen(false);
-  }
+    setSelectedSurcharge(null);
+  };
 
-  const confirmSurcharge = async (id: string, action: string, surchargeAmount?: number, totalAmount?: number, ) => {
-    console.log(id, surchargeAmount, totalAmount, action)
+  const confirmSurcharge = async (
+    id: string,
+    action: string,
+    surchargeAmount?: number,
+    totalAmount?: number
+  ) => {
     try {
       const baseURL = import.meta.env.VITE_BASE_URL;
-      const token = user ? await user.getIdToken() : ''; // Resolve the token to a string
-      
+      const token = user ? await user.getIdToken() : "";
+
       const response = await fetch(`${baseURL}/api/surcharge`, {
         body: JSON.stringify({
-          id: id,
-          surchargeAmount: surchargeAmount,
-          totalAmount: totalAmount,
-          action: action
+          id,
+          surchargeAmount,
+          totalAmount,
+          action,
         }),
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
+          Accept: "application/json",
+          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       });
@@ -123,22 +125,37 @@ export function DashBoard() {
       if (!response.ok) {
         throw new Error(`Error confirming surcharge: ${response.statusText}`);
       }
-      window.location.reload();
 
+      // // Reload data after successful confirmation
+      // setSurcharges((prev) =>
+      //   prev.map((surcharge) =>
+      //     surcharge.id === id
+      //       ? { ...surcharge, surchargeStatus: action }
+      //       : surcharge
+      //   )
+      // );
+      // setSearchedSurcharges((prev) =>
+      //   prev.map((surcharge) =>
+      //     surcharge.id === id
+      //       ? { ...surcharge, surchargeStatus: action }
+      //       : surcharge
+      //   )
+      // );
     } catch (err) {
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError('An unknown error occurred confirming surcharge');
-      }
+      setError(
+        err instanceof Error
+          ? err.message
+          : "An unknown error occurred while confirming surcharge"
+      );
+    } finally {
+      closeConfirmationModal();
     }
+    window.location.reload()
   };
 
   return (
     <div className="flex flex-col items-center justify-center h-screen">
-      <div>
-        <NavigationBar />
-      </div>
+      <NavigationBar />
       <div className="flex flex-col items-center">
         <Search onSearch={handleSearchChange} />
       </div>
@@ -149,15 +166,12 @@ export function DashBoard() {
           <p className="text-red-500">Error: {error}</p>
         ) : (
           <div>
-            <div className="flex justify-between mb-4">
-              <h2 className="text-lg font-bold">Surcharges: </h2>
-              
-            </div>
+            <h2 className="text-lg font-bold mb-4">Surcharges:</h2>
             {searchedSurcharges.length === 0 ? (
               <p>No surcharge records match the selected filter.</p>
             ) : (
               <ul className="list-disc pl-6">
-                {searchedSurcharges.map(surcharge => (
+                {searchedSurcharges.map((surcharge) => (
                   <li key={surcharge.id} className="mb-4">
                     <div>
                       <p>
@@ -167,11 +181,14 @@ export function DashBoard() {
                         <strong>Rate:</strong> {surcharge.rate}
                       </p>
                       <p>
-                        <strong>Reported Date:</strong>{' '}
-                        {new Date(surcharge.reportedDate).toLocaleDateString()}
+                        <strong>Reported Date:</strong>{" "}
+                        {new Date(
+                          surcharge.reportedDate
+                        ).toLocaleDateString()}
                       </p>
                       <p>
-                        <strong>Surcharge Amount:</strong> ${surcharge.surchargeAmount}
+                        <strong>Surcharge Amount:</strong> $
+                        {surcharge.surchargeAmount}
                       </p>
                       <p>
                         <strong>Total Amount:</strong> ${surcharge.totalAmount}
@@ -181,18 +198,10 @@ export function DashBoard() {
                       </p>
                       <button
                         className="px-4 py-2 bg-blue-500 text-white rounded"
-                        onClick={() => openConfirmationModal(surcharge.id, surcharge.surchargeAmount, surcharge.totalAmount, surcharge.image)}>
+                        onClick={() => openConfirmationModal(surcharge)}
+                      >
                         Process surcharge
                       </button>
-                      {confirmationModalOpen && (
-                        <ConfirmationModal
-                        imageName={imageName}
-                        isOpen={confirmationModalOpen}
-                        onClose={closeConfirmationModal}
-                        onConfirm={(newSurchargeAmount: number | undefined, newTotalAmount: number | undefined, action) =>
-                        confirmSurcharge(surcharge.id, action, newSurchargeAmount, newTotalAmount)}
-                        />
-                      )}
                     </div>
                   </li>
                 ))}
@@ -201,6 +210,16 @@ export function DashBoard() {
           </div>
         )}
       </div>
+      {selectedSurcharge && (
+        <ConfirmationModal
+          status={selectedSurcharge.surchargeStatus}
+          surchargeId={selectedSurcharge.id}
+          imageName={selectedSurcharge.image}
+          isOpen={confirmationModalOpen}
+          onClose={closeConfirmationModal}
+          onConfirm={confirmSurcharge}
+        />
+      )}
     </div>
   );
 }
