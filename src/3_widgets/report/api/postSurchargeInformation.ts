@@ -10,22 +10,7 @@ export async function postSurchargeInformation(request: PostSurchargeInformation
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      place: {
-        id: request.place.id,
-        displayName: request.place.displayName,
-        addressComponents: request.place.addressComponents.map((component) => {
-          return {
-            longText: component.longText,
-            shortText: component.shortText,
-            types: component.types,
-            languageCode: component.languageCode
-          }
-        }),
-        location: {
-          latitude: request.place.location?.latitude ?? 0,
-          longitude: request.place.location?.longitude ?? 0
-        }
-      },
+      placeId: request.placeId,
       image: request.image,
       totalAmount: request.totalAmount,
       surchargeAmount: request.surchargeAmount

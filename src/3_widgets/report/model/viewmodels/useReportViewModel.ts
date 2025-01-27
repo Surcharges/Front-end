@@ -10,6 +10,7 @@ import { PlaceModel } from "@entities/place"
 import { PlaceUI } from "@entities/place"
 
 import { MakeAddress } from "@shared/model"
+import { SurchargesStatusModel, SurchargesStatusUI } from "@entities/surcharges"
 
 export const useReportViewModel = (initialPlaceModel: PlaceModel) => {
 
@@ -37,6 +38,18 @@ export const useReportViewModel = (initialPlaceModel: PlaceModel) => {
   const setIsError = useUploadStore((state) => state.setIsError)
 
   const placeUI = useMemo((): PlaceUI => {
+
+    const surchargeState = () => {
+      switch (_placeModel.surcharges.status) {
+        case SurchargesStatusModel.Unknown:
+          return SurchargesStatusUI.Unknown
+        case SurchargesStatusModel.Reported:
+          return SurchargesStatusUI.Reported
+        case SurchargesStatusModel.Confirmed:
+          return SurchargesStatusUI.Confirmed
+      }
+    }
+
     return {
       id: _placeModel.id,
       name: _placeModel.displayName.text,
@@ -44,6 +57,11 @@ export const useReportViewModel = (initialPlaceModel: PlaceModel) => {
       location: {
         latitude: _placeModel.location.latitude,
         longitude: _placeModel.location.longitude
+      },
+      surcharges: {
+        status: surchargeState(),
+        rate: _placeModel.surcharges.rate,
+        reportedDate: _placeModel.surcharges.reportedDate
       }
     }
   },
@@ -86,22 +104,7 @@ export const useReportViewModel = (initialPlaceModel: PlaceModel) => {
 
       await UploadSurchargeInformation(
         {
-          place: {
-            id: _placeModel.id,
-            displayName: _placeModel.displayName,
-            addressComponents: _placeModel.addressComponents.map((component) => {
-              return {
-                longText: component.longText,
-                shortText: component.shortText,
-                types: component.types,
-                languageCode: component.languageCode
-              }
-            }),
-            location: {
-              latitude: _placeModel.location.latitude,
-              longitude: _placeModel.location.longitude
-            }
-          },
+          placeId: _placeModel.id,
           image: _image,
           totalAmount: parseFloat(totalAmount),
           surchargeAmount: parseFloat(surchargeAmount)
@@ -109,7 +112,7 @@ export const useReportViewModel = (initialPlaceModel: PlaceModel) => {
       )
 
       _setIsUploaded(true)
-      
+
     } catch {
 
       setIsError(true)
@@ -117,7 +120,7 @@ export const useReportViewModel = (initialPlaceModel: PlaceModel) => {
       setTimeout(() => {
         setIsError(false)
       }, 3000);
-      
+
     } finally {
       _setIsUploading(false)
     }

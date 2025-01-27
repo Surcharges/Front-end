@@ -1,9 +1,8 @@
-import { PlaceModel } from '@entities/place'
 import { postSurchargeInformation } from '../../api/postSurchargeInformation'
 import { makeImageToBase64 } from './MakeImageToBase64'
 
 export type UploadSurchargeInformationRequest = {
-  place: PlaceModel,
+  placeId: string,
   image: File | undefined,
   totalAmount: number,
   surchargeAmount: number
@@ -14,25 +13,7 @@ export async function UploadSurchargeInformation(request: UploadSurchargeInforma
   const encodedImage = await makeImageToBase64(request.image)
 
   await postSurchargeInformation({
-    place: {
-      id: request.place.id,
-      displayName: {
-        languageCode: request.place.displayName.languageCode,
-        text: request.place.displayName.text
-      },
-      addressComponents: request.place.addressComponents.map((component) => {
-        return {
-          longText: component.longText,
-          shortText: component.shortText,
-          types: component.types,
-          languageCode: component.languageCode
-        }
-      }),
-      location: {
-        latitude: request.place.location.latitude,
-        longitude: request.place.location.longitude
-      }
-    },
+    placeId: request.placeId,
     image: encodedImage,
     totalAmount: request.totalAmount,
     surchargeAmount: request.surchargeAmount
