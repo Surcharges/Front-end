@@ -21,7 +21,21 @@ export async function SearchPlaces(searchText: string, nextPageToken?: string): 
   const data = await response.json()
 
   return {
-    places: data.places.map((place: PlaceDTO) => {
+    places: data.places.map((place: any): PlaceDTO => {
+
+      const surchargeStatus = () => {
+        switch (place.surchargeStatus) {
+          case "UNKNOWN":
+            return SurchargesStatusDTO.Unknown
+          case "REPORTED":
+            return SurchargesStatusDTO.Reported
+          case "CONFIRMED":
+            return SurchargesStatusDTO.Confirmed
+          default:
+            return SurchargesStatusDTO.Unknown
+        }
+      }
+
       return {
         id: place.id,
         displayName: {
@@ -35,8 +49,8 @@ export async function SearchPlaces(searchText: string, nextPageToken?: string): 
             types: component.types
           }
         }),
-        status: place.status ?? SurchargesStatusDTO.Unknown,
-        rate: place.rate,
+        status: surchargeStatus(),
+        rate: place.surchargeRate,
         reportedDate: place.reportedDate
       }
     }),

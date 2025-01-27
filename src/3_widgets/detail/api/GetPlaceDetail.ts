@@ -1,4 +1,5 @@
 import { PlaceDTO } from '@entities/place'
+import { SurchargesStatusDTO } from '@entities/surcharges'
 import { AddressComponentsDTO } from '@entities/place'
 import { Timestamp } from 'firebase/firestore'
 
@@ -15,7 +16,7 @@ export async function GetPlaceDetail(id: string): Promise<PlaceDTO> {
   if (!response.ok) {
     throw new Error('Network response was not okay')
   }
-  
+
   const data = await response.json()
 
   const reportedDate = ((): Timestamp | undefined => {
@@ -25,7 +26,20 @@ export async function GetPlaceDetail(id: string): Promise<PlaceDTO> {
 
     return new Timestamp(data.reportedDate._seconds, data.reportedDate._nanoseconds)
   })
-  
+
+  const surchargeStatus = () => {
+    switch (data.surchargeStatus) {
+      case "UNKNOWN":
+        return SurchargesStatusDTO.Unknown
+      case "REPORTED":
+        return SurchargesStatusDTO.Reported
+      case "CONFIRMED":
+        return SurchargesStatusDTO.Confirmed
+      default:
+        return SurchargesStatusDTO.Unknown
+    }
+  }
+
   return {
     id: data.id,
     displayName: {
@@ -43,7 +57,8 @@ export async function GetPlaceDetail(id: string): Promise<PlaceDTO> {
       latitude: data.location.latitude,
       longitude: data.location.longitude
     },
-    rate: data.rate,
+    status: surchargeStatus(),
+    rate: data.surchargeRate,
     reportedDate: reportedDate()
   }
 }

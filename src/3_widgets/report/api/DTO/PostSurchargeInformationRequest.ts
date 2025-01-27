@@ -1,7 +1,5 @@
-import { PlaceDTO } from "@entities/place"
-
 export type PostSurchargeInformationRequest = {
-  place: PlaceDTO
+  placeId: string
   image: string
   totalAmount: number
   surchargeAmount: number
