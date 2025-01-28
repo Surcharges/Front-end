@@ -22,7 +22,7 @@ const ConfirmationModal: React.FC<Props> = ({status, surchargeId, imageName, isO
         setLoadingImage(true);
         try {
           const baseURL = import.meta.env.VITE_BASE_URL;
-          const response = await fetch(`${baseURL}/api/image?image=${imageName}`, {  // TODO: api -> admin
+          const response = await fetch(`${baseURL}/admin/image?image=${imageName}`, {  // TODO: api -> admin
             method: 'GET',
             headers: {
               Accept: 'application/json',

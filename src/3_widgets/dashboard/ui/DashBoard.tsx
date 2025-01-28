@@ -13,6 +13,8 @@ interface Surcharge {
   totalAmount: number;
   surchargeAmount: number;
   surchargeStatus: string;
+  displayName: string;
+  addressComponents: string;
 }
 
 export function DashBoard() {
@@ -32,7 +34,7 @@ export function DashBoard() {
         const baseURL = import.meta.env.VITE_BASE_URL;
         const token = user ? await user.getIdToken() : "";
 
-        const response = await fetch(`${baseURL}/api/surcharges`, {
+        const response = await fetch(`${baseURL}/admin/places`, {
           method: "GET",
           headers: {
             Accept: "application/json",
@@ -45,16 +47,18 @@ export function DashBoard() {
           throw new Error(`Error fetching surcharges: ${response.statusText}`);
         }
 
-        const allSurcharges = await response.json();
-        const formattedSurcharges: Surcharge[] = allSurcharges.map(
+        const allPlaces = await response.json();
+        const formattedSurcharges: Surcharge[] = allPlaces.map(
           (surcharge: any) => ({
-            id: surcharge.id,
-            image: surcharge.image,
-            rate: surcharge.rate,
-            reportedDate: surcharge.reportedDate,
-            totalAmount: surcharge.totalAmount,
-            surchargeAmount: surcharge.surchargeAmount,
-            surchargeStatus: surcharge.surchargeStatus,
+            id: surcharge.places.id,
+            image: surcharge.places.image,
+            rate: surcharge.places.rate,
+            reportedDate: surcharge.places.reportedDate,
+            totalAmount: surcharge.places.totalAmount,
+            surchargeAmount: surcharge.places.surchargeAmount,
+            surchargeStatus: surcharge.places.surchargeStatus,
+            displayName: surcharge.places.displayName.text,
+            addressComponents: surcharge.places.addressComponents.shortText
           })
         );
 
@@ -78,7 +82,8 @@ export function DashBoard() {
     const filterValue = newFilter.toLowerCase();
     const filteredSurcharges = surcharges.filter(
       (surcharge) =>
-        surcharge.id.toLowerCase().includes(filterValue) ||
+        surcharge.displayName.toLowerCase().includes(filterValue) ||
+        surcharge.addressComponents.toLowerCase().includes(filterValue) ||
         surcharge.surchargeStatus.toLowerCase().includes(filterValue) ||
         surcharge.rate.toString() === filterValue ||
         surcharge.totalAmount.toString() === filterValue ||
@@ -107,7 +112,7 @@ export function DashBoard() {
       const baseURL = import.meta.env.VITE_BASE_URL;
       const token = user ? await user.getIdToken() : "";
 
-      const response = await fetch(`${baseURL}/api/surcharge`, {
+      const response = await fetch(`${baseURL}/admin/surcharge`, {
         body: JSON.stringify({
           id,
           surchargeAmount,
@@ -175,7 +180,10 @@ export function DashBoard() {
                   <li key={surcharge.id} className="mb-4">
                     <div>
                       <p>
-                        <strong>ID:</strong> {surcharge.id}
+                        <strong>Place title:</strong> {surcharge.displayName}
+                      </p>
+                      <p>
+                        <strong>Place address:</strong> {surcharge.addressComponents}
                       </p>
                       <p>
                         <strong>Rate:</strong> {surcharge.rate}
