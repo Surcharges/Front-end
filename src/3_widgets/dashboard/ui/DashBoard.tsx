@@ -48,17 +48,17 @@ export function DashBoard() {
         }
 
         const allPlaces = await response.json();
-        const formattedSurcharges: Surcharge[] = allPlaces.map(
+        const formattedSurcharges: Surcharge[] = allPlaces.places.map(
           (surcharge: any) => ({
-            id: surcharge.places.id,
-            image: surcharge.places.image,
-            rate: surcharge.places.rate,
-            reportedDate: surcharge.places.reportedDate,
-            totalAmount: surcharge.places.totalAmount,
-            surchargeAmount: surcharge.places.surchargeAmount,
-            surchargeStatus: surcharge.places.surchargeStatus,
-            displayName: surcharge.places.displayName.text,
-            addressComponents: surcharge.places.addressComponents.shortText
+            id: surcharge.id,
+            image: surcharge.image,
+            rate: surcharge.rate,
+            reportedDate: surcharge.reportedDate._seconds * 1000,
+            totalAmount: surcharge.totalAmount,
+            surchargeAmount: surcharge.surchargeAmount,
+            surchargeStatus: surcharge.surchargeStatus,
+            displayName: surcharge.displayName.text,
+            addressComponents: `${surcharge.addressComponents[0].shortText}/${surcharge.addressComponents[1].shortText} ${surcharge.addressComponents[2].shortText}`
           })
         );
 
