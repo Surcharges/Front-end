@@ -5,6 +5,7 @@ import { Main } from '@widgets/main'
 import { Results } from '@widgets/results'
 import { Detail } from '@widgets/detail'
 import { Report } from '@widgets/report'
+import { PrivacyPolicy } from '@widgets/privacyPolicy'
 
 const queryClient = new QueryClient()
 
@@ -19,6 +20,7 @@ export function App() {
               <Route path="/search" element={<Results />} />
               <Route path="/place" element={<Detail />} />
               <Route path="/report" element={<Report />} />
+              <Route path="/privacy" element={<PrivacyPolicy />} />
             </Routes>
           </BrowserRouter>
         </QueryClientProvider>
