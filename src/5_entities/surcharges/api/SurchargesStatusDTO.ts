@@ -1,5 +1,5 @@
 export enum SurchargesStatusDTO {
-  Confirmed,
-  Reported,
-  Unknown,
+  CONFIRMED = 'CONFIRMED',
+  REPORTED = 'REPORTED',
+  UNKNOWN = 'UNKNOWN'
 }

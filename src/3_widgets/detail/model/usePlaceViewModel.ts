@@ -18,11 +18,11 @@ export const usePlaceViewModel = (placeId: string) => {
 
     const surchargesStatus = (): SurchargesStatusModel => {
       switch (useGetPlaceQueryData?.status) {
-        case SurchargesStatusDTO.Confirmed:
+        case SurchargesStatusDTO.CONFIRMED:
           return SurchargesStatusModel.Confirmed
-        case SurchargesStatusDTO.Reported:
+        case SurchargesStatusDTO.REPORTED:
           return SurchargesStatusModel.Reported
-        case SurchargesStatusDTO.Unknown:
+        case SurchargesStatusDTO.UNKNOWN:
           return SurchargesStatusModel.Unknown
         default:
           return SurchargesStatusModel.Unknown

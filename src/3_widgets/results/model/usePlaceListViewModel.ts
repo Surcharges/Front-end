@@ -17,11 +17,11 @@ export const usePlaceListViewModel = (searchText: string, nextPageToken?: string
 
       const status = () => {
         switch (place.status) {
-          case SurchargesStatusDTO.Confirmed:
+          case SurchargesStatusDTO.CONFIRMED:
             return SurchargesStatusUI.Confirmed
-          case SurchargesStatusDTO.Reported:
+          case SurchargesStatusDTO.REPORTED:
             return SurchargesStatusUI.Reported
-          case SurchargesStatusDTO.Unknown:
+          case SurchargesStatusDTO.UNKNOWN:
             return SurchargesStatusUI.Unknown
         }
       }
