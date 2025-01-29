@@ -17,15 +17,19 @@ const Search: React.FC<SearchProps> = ({ onSearch }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input
-        type="text"
-        placeholder="Enter to search surcharges"
-        value={searchTerm}
-        onChange={handleSearchChange}
-        className="px-4 py-2 mb-2 border rounded"
-      />
-    </form>
+    <div className='fixed top-0 left-0 m-4'>
+      <div className='flex items-center'>
+        <form onSubmit={handleSubmit}>
+          <input
+            type="text"
+            placeholder="Enter to search surcharges"
+            value={searchTerm}
+            onChange={handleSearchChange}
+            className="px-4 py-2 mb-2 border rounded"
+          />
+        </form>
+      </div>
+    </div>
   );
 };
 
