@@ -6,6 +6,7 @@ import { MakeAddress } from "@shared/model"
 import { PlaceModel, PlaceUI } from "@entities/place"
 import {
   SurchargesStatusDTO,
+  SurchargesStatusModel,
   SurchargesStatusUI,
   SurchargesUI
 } from "@entities/surcharges"
@@ -14,6 +15,19 @@ export const usePlaceViewModel = (placeId: string) => {
   const { data: useGetPlaceQueryData, isFetching } = useGetPlaceQuery(placeId)
 
   const placeModel = useMemo((): PlaceModel => {
+
+    const surchargesStatus = (): SurchargesStatusModel => {
+      switch (useGetPlaceQueryData?.status) {
+        case SurchargesStatusDTO.CONFIRMED:
+          return SurchargesStatusModel.Confirmed
+        case SurchargesStatusDTO.REPORTED:
+          return SurchargesStatusModel.Reported
+        case SurchargesStatusDTO.UNKNOWN:
+          return SurchargesStatusModel.Unknown
+        default:
+          return SurchargesStatusModel.Unknown
+      }
+    }
 
     return {
       id: useGetPlaceQueryData?.id ?? '',
@@ -32,6 +46,11 @@ export const usePlaceViewModel = (placeId: string) => {
       location: {
         latitude: useGetPlaceQueryData?.location?.latitude ?? 0,
         longitude: useGetPlaceQueryData?.location?.longitude ?? 0
+      },
+      surcharges: {
+        status: surchargesStatus(),
+        rate: useGetPlaceQueryData?.rate ?? 0,
+        reportedDate: useGetPlaceQueryData?.reportedDate?.seconds
       }
     }
   },
@@ -39,25 +58,14 @@ export const usePlaceViewModel = (placeId: string) => {
   )
 
   const placeUI = useMemo((): PlaceUI => {
-    return {
-      id: placeModel.id,
-      name: placeModel.displayName.text,
-      address: MakeAddress(placeModel.addressComponents),
-      location: placeModel.location
-    }
-  },
-    [placeModel]
-  )
-
-  const surchargesUI = useMemo((): SurchargesUI => {
 
     const surchargesStatus = (): SurchargesStatusUI => {
-      switch (useGetPlaceQueryData?.status) {
-        case SurchargesStatusDTO.CONFIRMED:
+      switch (placeModel.surcharges.status) {
+        case SurchargesStatusModel.Confirmed:
           return SurchargesStatusUI.Confirmed
-        case SurchargesStatusDTO.REPORTED:
+        case SurchargesStatusModel.Reported:
           return SurchargesStatusUI.Reported
-        case SurchargesStatusDTO.UNKNOWN:
+        case SurchargesStatusModel.Unknown:
           return SurchargesStatusUI.Unknown
         default:
           return SurchargesStatusUI.Unknown
@@ -65,11 +73,23 @@ export const usePlaceViewModel = (placeId: string) => {
     }
 
     return {
-      status: surchargesStatus(),
-      rate: useGetPlaceQueryData?.rate,
-      reportedDate: useGetPlaceQueryData?.reportedDate?.seconds
+      id: placeModel.id,
+      name: placeModel.displayName.text,
+      address: MakeAddress(placeModel.addressComponents),
+      location: placeModel.location,
+      surcharges: {
+        status: surchargesStatus(),
+        rate: placeModel.surcharges.rate,
+        reportedDate: placeModel.surcharges.reportedDate
+      }
     }
-  }, [useGetPlaceQueryData, isFetching])
+  },
+    [placeModel]
+  )
+
+  const surchargesUI = useMemo((): SurchargesUI => {
+    return placeUI.surcharges
+  }, [placeUI, isFetching])
 
   return { placeModel, placeUI, surchargesUI, isFetching }
 }

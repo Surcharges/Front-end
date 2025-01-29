@@ -3,7 +3,7 @@ import { SurchargesStatusDTO } from '@entities/surcharges'
 import { AddressComponentsDTO } from '@entities/place'
 import { Timestamp } from 'firebase/firestore'
 
-export async function GetPlaceDetail(id: string): Promise<GetPlaceDetailResponse> {
+export async function GetPlaceDetail(id: string): Promise<PlaceDTO> {
 
   const baseURL = import.meta.env.VITE_BASE_URL
 
@@ -30,13 +30,13 @@ export async function GetPlaceDetail(id: string): Promise<GetPlaceDetailResponse
   const surchargeStatus = () => {
     switch (data.surchargeStatus) {
       case "UNKNOWN":
-        return SurchargesStatusDTO.Unknown
+        return SurchargesStatusDTO.UNKNOWN
       case "REPORTED":
-        return SurchargesStatusDTO.Reported
+        return SurchargesStatusDTO.REPORTED
       case "CONFIRMED":
-        return SurchargesStatusDTO.Confirmed
+        return SurchargesStatusDTO.CONFIRMED
       default:
-        return SurchargesStatusDTO.Unknown
+        return SurchargesStatusDTO.UNKNOWN
     }
   }
 
