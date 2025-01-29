@@ -1,17 +1,13 @@
 name-template: '$NEXT_MINOR_VERSION'
 tag-template: '$NEXT_MINOR_VERSION'
 categories:
-  - title: '🚀 Features'
-    label: 'feature'
+  - title: '🚀 Enhancement'
+    label: 'enhancement'
   - title: '🐛 Fixes'
     label: 'bug'
-  - title: '🔥 Hotfixes'
-    label: 'hotfix'
   - title: '🍿 ETC'
     label: 'etc'
 change-template: '- $TITLE #$NUMBER @$AUTHOR '
 template: |
-  ## Uncategorised (Please update its label🙏🏻)
-
   # What's Changed
   $CHANGES
