@@ -3,6 +3,7 @@ import { NavigationBar } from "./components/NavigationBar";
 import { useAuth } from "@shared/model";
 import Search from "./components/Search";
 import ConfirmationModal from "./components/ConfirmationModal";
+import { Box } from '@mui/material';
 
 interface Surcharge {
   id: string;
@@ -159,19 +160,38 @@ export function DashBoard() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen">
+    <div className="h-screen flex flex-col">
+    {/* Fixed Navbar */}
+    <nav className="fixed top-0 left-0 w-full bg-white shadow-md z-10">
       <NavigationBar />
-      <div className="flex flex-col items-center">
-        <Search onSearch={handleSearchChange} />
-      </div>
-      <div className="mt-4">
+      <Search onSearch={handleSearchChange} />
+      <Box sx={{ display: "flex", justifyContent: "center", flexGrow: 1 }}>
+        <div className="m-4 text-center">
+          <h2 className="text-lg font-bold mb-4">Reported Surcharges:</h2>
+        </div>
+      </Box>
+    </nav>
+
+    {/* Scrollable List Container (Below Navbar) */}
+    <div className="flex flex-col flex-grow mt-[65px] overflow-y-auto">
+      <Box sx={{ display: "flex", justifyContent: "center", flexGrow: 1 }}>
+        <Box
+          sx={{
+            width: "90%",
+            maxWidth: "500px",
+            overflowY: "auto", // Scrolls only the list
+            height: "90vh", // Ensures proper height
+            bgcolor: "background.paper",
+          }}
+        >
+          <div className="mt-4">
         {loading ? (
           <p>Loading surcharges...</p>
         ) : error ? (
           <p className="text-red-500">Error: {error}</p>
         ) : (
           <div>
-            <h2 className="text-lg font-bold mb-4">Surcharges:</h2>
+            {/* <h2 className="text-lg font-bold mb-4">Reported Surcharges:</h2> */}
             {searchedSurcharges.length === 0 ? (
               <p>No surcharge records match the selected filter.</p>
             ) : (
@@ -180,13 +200,13 @@ export function DashBoard() {
                   <li key={surcharge.id} className="mb-4">
                     <div>
                       <p>
-                        <strong>Place title:</strong> {surcharge.displayName}
+                        <strong>Title:</strong> {surcharge.displayName}
                       </p>
                       <p>
-                        <strong>Place address:</strong> {surcharge.addressComponents}
+                        <strong>Address:</strong> {surcharge.addressComponents}
                       </p>
                       <p>
-                        <strong>Rate:</strong> {surcharge.rate}
+                        <strong>Surcharge Rate:</strong> {surcharge.rate}
                       </p>
                       <p>
                         <strong>Reported Date:</strong>{" "}
@@ -202,7 +222,21 @@ export function DashBoard() {
                         <strong>Total Amount:</strong> ${surcharge.totalAmount}
                       </p>
                       <p>
-                        <strong>Status:</strong> {surcharge.surchargeStatus}
+                        <strong>Status:</strong>{' '}
+                          <span
+                            style={{
+                              color:
+                                surcharge.surchargeStatus === 'CONFIRMED'
+                                  ? 'lightgreen'
+                                : surcharge.surchargeStatus === 'REPORTED'
+                                  ? 'gray'
+                                : surcharge.surchargeStatus === 'REJECTED'
+                                  ? 'red'  
+                                  : 'yellow',
+                            }}
+                          >
+                          {surcharge.surchargeStatus}
+                        </span>
                       </p>
                       <button
                         className="px-4 py-2 bg-blue-500 text-white rounded"
@@ -228,6 +262,10 @@ export function DashBoard() {
           onConfirm={confirmSurcharge}
         />
       )}
-    </div>
+        </Box>
+      </Box>
+    </div>  
+
+  </div>  
   );
 }
