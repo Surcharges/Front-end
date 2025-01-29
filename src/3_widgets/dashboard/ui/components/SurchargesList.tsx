@@ -2,7 +2,7 @@ import React from "react";
 import { useState } from "react";
 import ConfirmationModal from "./ConfirmationModal";
 import { useAuth } from "@shared/model";
-import { Surcharge } from "../model/surcharge/surcharge"
+import { Surcharge } from "../model/surcharge/Surcharge"
 import { Box } from '@mui/material';
 
 interface SurhcargeListProps {

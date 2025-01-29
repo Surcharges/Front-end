@@ -3,7 +3,7 @@ import { NavigationBar } from "./components/NavigationBar";
 import { useAuth } from "@shared/model";
 import Search from "./components/Search";
 import SurhcargesList from "./components/SurchargesList"
-import { Surcharge } from "./model/surcharge/surcharge"
+import { Surcharge } from "./model/surcharge/Surcharge"
 import { Box } from '@mui/material';
 
 export function DashBoard() {
