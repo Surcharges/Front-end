@@ -131,11 +131,11 @@ const SurhcargesList: React.FC<SurhcargeListProps> = ({ searchedSurcharges, load
                         ).toLocaleDateString()}
                       </p>
                       <p>
-                        <strong>Surcharge Amount:</strong> $
-                        {surcharge.surchargeAmount}
+                        <strong>Total Amount:</strong> ${surcharge.totalAmount}
                       </p>
                       <p>
-                        <strong>Total Amount:</strong> ${surcharge.totalAmount}
+                        <strong>Surcharge Amount:</strong> $
+                        {surcharge.surchargeAmount}
                       </p>
                       <p>
                         <strong>Status:</strong>{' '}
@@ -170,6 +170,8 @@ const SurhcargesList: React.FC<SurhcargeListProps> = ({ searchedSurcharges, load
       </div>
       {selectedSurcharge && (
         <ConfirmationModal
+          totalAmount={selectedSurcharge.totalAmount}
+          surchargeAmount={selectedSurcharge.surchargeAmount}
           status={selectedSurcharge.surchargeStatus}
           surchargeId={selectedSurcharge.id}
           imageName={selectedSurcharge.image}

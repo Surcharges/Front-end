@@ -3,6 +3,8 @@ import { Button, TextField, Dialog, DialogTitle, DialogContent, DialogActions, C
 import { useAuth } from "@shared/model";
 
 interface Props {
+  totalAmount: number
+  surchargeAmount: number
   status: string
   surchargeId: string;
   imageName: string | undefined;
@@ -11,7 +13,7 @@ interface Props {
   onConfirm: (surchargeId: string, action: string, newSurchargeAmount: number | undefined, newTotalAmount: number | undefined) => Promise<void>;
 }
 
-const ConfirmationModal: React.FC<Props> = ({status, surchargeId, imageName, isOpen, onClose, onConfirm }) => {
+const ConfirmationModal: React.FC<Props> = ({totalAmount, surchargeAmount, status, surchargeId, imageName, isOpen, onClose, onConfirm }) => {
   const [newSurchargeAmount, setNewSurchargeAmount] = useState('');
   const [newTotalAmount, setNewTotalAmount] = useState('');
   const [imageBase64, setImageBase64] = useState<string | null>(null);
@@ -133,22 +135,30 @@ const ConfirmationModal: React.FC<Props> = ({status, surchargeId, imageName, isO
           )}
         </Box>
         <TextField
-          label="New Surcharge Amount"
-          type="number"
-          value={newSurchargeAmount}
-          onChange={(e) => handleInputChange(e, setNewSurchargeAmount)}
-          fullWidth
-          variant="outlined"
-          margin="normal"
-        />
-        <TextField
           label="New Total Amount"
+          placeholder={totalAmount.toString()}
           type="number"
           value={newTotalAmount}
           onChange={(e) => handleInputChange(e, setNewTotalAmount)}
           fullWidth
           variant="outlined"
           margin="normal"
+          slotProps={{
+            inputLabel: { shrink: true }
+          }}
+        />
+        <TextField
+          label="New Surcharge Amount"
+          placeholder={surchargeAmount.toString()}
+          type="number"
+          value={newSurchargeAmount}
+          onChange={(e) => handleInputChange(e, setNewSurchargeAmount)}
+          fullWidth
+          variant="outlined"
+          margin="normal"
+          slotProps={{
+            inputLabel: { shrink: true }
+          }}
         />
       </DialogContent>
       <DialogActions>
