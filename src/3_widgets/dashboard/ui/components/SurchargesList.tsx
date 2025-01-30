@@ -139,23 +139,29 @@ const SurhcargesList: React.FC<SurhcargeListProps> = ({ searchedSurcharges, load
                       </p>
                       <p>
                         <strong>Status:</strong>{' '}
-                          <span
-                            style={{
-                              color:
-                                surcharge.surchargeStatus === 'CONFIRMED'
-                                  ? 'lightgreen'
+                        <Box
+                          component="span"
+                          sx={{
+                            backgroundColor:
+                              surcharge.surchargeStatus === 'CONFIRMED'
+                                ? 'lightgreen'
                                 : surcharge.surchargeStatus === 'REPORTED'
-                                  ? 'gray'
+                                ? 'blue'
                                 : surcharge.surchargeStatus === 'REJECTED'
-                                  ? 'red'  
-                                  : 'yellow',
-                            }}
-                          >
+                                ? 'red'
+                                : 'yellow',
+                            color: 'white', // Text color for contrast
+                            padding: '4px 8px', // Padding for the badge
+                            borderRadius: '8px', // Rounded corners
+                            fontWeight: 'bold',
+                            display: 'inline-block', // Keeps the box inline
+                          }}
+                        >
                           {surcharge.surchargeStatus}
-                        </span>
+                        </Box>
                       </p>
                       <button
-                        className="px-4 py-2 bg-blue-500 text-white rounded"
+                        className="px-4 py-2 bg-purple-500 text-white rounded"
                         onClick={() => openConfirmationModal(surcharge)}
                       >
                         Process surcharge
