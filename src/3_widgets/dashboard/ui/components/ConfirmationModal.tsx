@@ -73,7 +73,7 @@ const ConfirmationModal: React.FC<Props> = ({totalAmount, surchargeAmount, statu
             onClick={() =>
               onConfirm(surchargeId, "CONFIRM", Number(newSurchargeAmount), Number(newTotalAmount))
             }
-            color="primary"
+            color="success"
             variant="contained"
           >
             Confirm Surcharge
@@ -82,7 +82,7 @@ const ConfirmationModal: React.FC<Props> = ({totalAmount, surchargeAmount, statu
             onClick={() =>
               onConfirm(surchargeId, "REJECT", Number(newSurchargeAmount), Number(newTotalAmount))
             }
-            color="secondary"
+            color="error"
             variant="contained"
           >
             Reject Surcharge
@@ -95,7 +95,7 @@ const ConfirmationModal: React.FC<Props> = ({totalAmount, surchargeAmount, statu
           onClick={() =>
             onConfirm(surchargeId, "REJECT", Number(newSurchargeAmount), Number(newTotalAmount))
           }
-          color="secondary"
+          color="error"
           variant="contained"
         >
           Reject Surcharge
@@ -107,7 +107,7 @@ const ConfirmationModal: React.FC<Props> = ({totalAmount, surchargeAmount, statu
           onClick={() =>
             onConfirm(surchargeId, "CONFIRM", Number(newSurchargeAmount), Number(newTotalAmount))
           }
-          color="primary"
+          color="success"
           variant="contained"
         >
           Confirm Surcharge
@@ -162,7 +162,7 @@ const ConfirmationModal: React.FC<Props> = ({totalAmount, surchargeAmount, statu
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} color="secondary" variant="outlined">
+        <Button onClick={onClose} color="primary" variant="outlined">
           Close
         </Button>
         {renderContent()}
