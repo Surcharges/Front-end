@@ -77,16 +77,18 @@ jobs:
           name: dist
           path: dist
 
+      - name: Setup Firebase Tools
+        uses: w9jds/setup-firebase@main
+        with:
+          tools-version: 13.29.1
+          firebase_token: ${{ secrets.FIREBASE_TOKEN }}
+
       - name: Select Configuration
         run: firebase use dev
 
       - name: Deploy to Firebase Hosting
-        uses: w9jds/firebase-action@master
-        with:
-          args: deploy --only hosting --message \"${{ github.event.release.tag_name }}\"
-        env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-      
+        run: firebase deploy --only hosting
+
       - name: Notify Deployment End
         if: always()
         uses: 8398a7/action-slack@v3
