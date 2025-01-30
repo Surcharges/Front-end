@@ -28,7 +28,7 @@ jobs:
 
       - name: Set up App Version
         run: |
-          npm version ${{ tag }} --no-git-tag-version --allow-same-version
+          npm version ${{ steps.get_latest_tag.outputs.tag }} --no-git-tag-version --allow-same-version
           npm version minor --no-git-tag-version --allow-same-version
         
       - name: Generate .env
