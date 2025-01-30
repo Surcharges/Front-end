@@ -1,5 +1,7 @@
 {
   "projects": {
-    "default": "surcharges"
+    "default": "surcharges",
+    "dev": "surcharges-dev",
+    "prod": "surcharges"
   }
 }
