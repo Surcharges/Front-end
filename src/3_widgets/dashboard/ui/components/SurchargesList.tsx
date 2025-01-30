@@ -107,7 +107,6 @@ const SurhcargesList: React.FC<SurhcargeListProps> = ({ searchedSurcharges, load
           <p className="text-red-500">Error: {error || errorProp}</p>
         ) : (
           <div>
-            <h2 className="text-lg font-bold mb-4">Surcharges:</h2>
             {searchedSurcharges.length === 0 ? (
               <p>No surcharge records match the selected filter.</p>
             ) : (
