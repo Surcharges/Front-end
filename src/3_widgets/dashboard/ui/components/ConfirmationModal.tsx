@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, TextField, Dialog, DialogTitle, DialogContent, DialogActions, CircularProgress, Box } from '@mui/material';
+import { useAuth } from "@shared/model";
 
 interface Props {
   status: string
@@ -15,6 +16,7 @@ const ConfirmationModal: React.FC<Props> = ({status, surchargeId, imageName, isO
   const [newTotalAmount, setNewTotalAmount] = useState('');
   const [imageBase64, setImageBase64] = useState<string | null>(null);
   const [loadingImage, setLoadingImage] = useState(false);
+  const { user } = useAuth();
 
   useEffect(() => {
     if (isOpen && imageName) {
@@ -22,17 +24,20 @@ const ConfirmationModal: React.FC<Props> = ({status, surchargeId, imageName, isO
         setLoadingImage(true);
         try {
           const baseURL = import.meta.env.VITE_BASE_URL;
-          const response = await fetch(`${baseURL}/admin/image?image=${imageName}`, {  // TODO: api -> admin
+          const token = user ? await user.getIdToken() : "";
+
+          const response = await fetch(`${baseURL}/admin/image?image=${imageName}`, {
             method: 'GET',
             headers: {
               Accept: 'application/json',
               'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
             },
           });
 
           if (response.ok) {
             const data = await response.json();
-            setImageBase64(data.image); // Assuming `data.image` contains the Base64 string
+            setImageBase64(data.image); 
           } else {
             console.error('Error fetching image:', response.statusText);
             setImageBase64(null);
@@ -49,7 +54,7 @@ const ConfirmationModal: React.FC<Props> = ({status, surchargeId, imageName, isO
     } else {
       setImageBase64(null);
     }
-  }, [isOpen, imageName]);
+  }, [user, isOpen, imageName]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
