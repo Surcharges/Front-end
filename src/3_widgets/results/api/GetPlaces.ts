@@ -1,14 +1,15 @@
-import { PlaceDTO } from '@entities/place'
+import { GetPlacesResponse } from './DTO/GetPlacesResponse'
 import { AddressComponentsDTO } from '@entities/place'
 import { SurchargesStatusDTO } from '@entities/surcharges'
+import { PlaceDTO } from '@entities/place'
 
-export async function SearchPlaces(searchText: string, nextPageToken?: string): Promise<{ places: PlaceDTO[], nextPageToken?: string }> {
+export async function GetPlaces(searchText: string, nextPageToken?: string): Promise<{ places: GetPlacesResponse[], nextPageToken?: string }> {
 
   const baseURL = import.meta.env.VITE_BASE_URL
 
   const requestURL = nextPageToken && nextPageToken != '' 
-  ? `${baseURL}/places?searchText=${searchText}&nextPageToken=${nextPageToken}`
-  : `${baseURL}/places?searchText=${searchText}`
+  ? `${baseURL}/api/places?searchText=${searchText}&nextPageToken=${nextPageToken}`
+  : `${baseURL}/api/places?searchText=${searchText}`
 
   const response = await fetch(requestURL, {
     method: 'GET'
@@ -26,13 +27,13 @@ export async function SearchPlaces(searchText: string, nextPageToken?: string): 
       const surchargeStatus = () => {
         switch (place.surchargeStatus) {
           case "UNKNOWN":
-            return SurchargesStatusDTO.Unknown
+            return SurchargesStatusDTO.UNKNOWN
           case "REPORTED":
-            return SurchargesStatusDTO.Reported
+            return SurchargesStatusDTO.REPORTED
           case "CONFIRMED":
-            return SurchargesStatusDTO.Confirmed
+            return SurchargesStatusDTO.CONFIRMED
           default:
-            return SurchargesStatusDTO.Unknown
+            return SurchargesStatusDTO.UNKNOWN
         }
       }
 

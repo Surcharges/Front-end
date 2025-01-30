@@ -1,4 +1,4 @@
-name: Release
+name: Deploy to Production
 
 on:
   release:
@@ -24,19 +24,19 @@ jobs:
       - name: Set up App Version
         run: npm version ${{ github.event.release.tag_name }} --no-git-tag-version --allow-same-version
         
-      - name: Generate .env.production
+      - name: Generate .env
         run: |
-          echo "VITE_BASE_URL=${{ secrets.VITE_BASE_URL }}" >> .env.production
-          echo "VITE_GOOGLE_MAPS_JAVASCRIPT_API_KEY=${{ secrets.VITE_GOOGLE_MAPS_JAVASCRIPT_API_KEY }}" >> .env.production
-          echo "VITE_GOOGLE_MAPS_MAP_ID=${{ secrets.VITE_GOOGLE_MAPS_MAP_ID }}" >> .env.production
-          echo "VITE_FIREBASE_API_KEY=${{ secrets.VITE_FIREBASE_API_KEY }}" >> .env.production
-          echo "VITE_FIREBASE_AUTH_DOMAIN=${{ secrets.VITE_FIREBASE_AUTH_DOMAIN }}" >> .env.production
-          echo "VITE_FIREBASE_PROJECT_ID=${{ secrets.VITE_FIREBASE_PROJECT_ID }}" >> .env.production
-          echo "VITE_FIREBASE_STORAGE_BUCKET=${{ secrets.VITE_FIREBASE_STORAGE_BUCKET }}" >> .env.production
-          echo "VITE_FIREBASE_MESSAGING_SENDER_ID=${{ secrets.VITE_FIREBASE_MESSAGING_SENDER_ID }}" >> .env.production
-          echo "VITE_FIREBASE_APP_ID=${{ secrets.VITE_FIREBASE_APP_ID }}" >> .env.production
-          echo "VITE_FIREBASE_MEASUREMENT_ID=${{ secrets.VITE_FIREBASE_MEASUREMENT_ID }}" >> .env.production
-          echo "VITE_RECAPTCHA_SITE_KEY=${{ secrets.VITE_RECAPTCHA_SITE_KEY }}" >> .env.production
+          echo "VITE_BASE_URL=${{ secrets.VITE_BASE_URL }}" >> .env
+          echo "VITE_GOOGLE_MAPS_JAVASCRIPT_API_KEY=${{ secrets.VITE_GOOGLE_MAPS_JAVASCRIPT_API_KEY }}" >> .env
+          echo "VITE_GOOGLE_MAPS_MAP_ID=${{ secrets.VITE_GOOGLE_MAPS_MAP_ID }}" >> .env
+          echo "VITE_FIREBASE_API_KEY=${{ secrets.VITE_FIREBASE_API_KEY }}" >> .env
+          echo "VITE_FIREBASE_AUTH_DOMAIN=${{ secrets.VITE_FIREBASE_AUTH_DOMAIN }}" >> .env
+          echo "VITE_FIREBASE_PROJECT_ID=${{ secrets.VITE_FIREBASE_PROJECT_ID }}" >> .env
+          echo "VITE_FIREBASE_STORAGE_BUCKET=${{ secrets.VITE_FIREBASE_STORAGE_BUCKET }}" >> .env
+          echo "VITE_FIREBASE_MESSAGING_SENDER_ID=${{ secrets.VITE_FIREBASE_MESSAGING_SENDER_ID }}" >> .env
+          echo "VITE_FIREBASE_APP_ID=${{ secrets.VITE_FIREBASE_APP_ID }}" >> .env
+          echo "VITE_FIREBASE_MEASUREMENT_ID=${{ secrets.VITE_FIREBASE_MEASUREMENT_ID }}" >> .env
+          echo "VITE_RECAPTCHA_SITE_KEY=${{ secrets.VITE_RECAPTCHA_SITE_KEY }}" >> .env
 
       - name: Build
         run: npm run build
@@ -70,13 +70,18 @@ jobs:
           name: dist
           path: dist
 
-      - name: Deploy to Firebase Hosting
-        uses: w9jds/firebase-action@master
+      - name: Setup Firebase Tools
+        uses: w9jds/setup-firebase@main
         with:
-          args: deploy --only hosting --message \"${{ github.event.release.tag_name }}\"
-        env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-      
+          tools-version: 13.29.1
+          firebase_token: ${{ secrets.FIREBASE_TOKEN }}
+
+      - name: Select Configuration
+        run: firebase use prod
+
+      - name: Deploy to Firebase Hosting
+        run: firebase deploy --only hosting --message \"${{ github.event.release.tag_name }}\"
+        
       - name: Notify Deployment End
         if: always()
         uses: 8398a7/action-slack@v3

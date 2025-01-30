@@ -7,7 +7,7 @@ export async function GetPlaceDetail(id: string): Promise<PlaceDTO> {
 
   const baseURL = import.meta.env.VITE_BASE_URL
 
-  const requestURL = `${baseURL}/place?id=${id}`
+  const requestURL = `${baseURL}/api/place?id=${id}`
 
   const response = await fetch(requestURL, {
     method: 'GET'
@@ -30,13 +30,13 @@ export async function GetPlaceDetail(id: string): Promise<PlaceDTO> {
   const surchargeStatus = () => {
     switch (data.surchargeStatus) {
       case "UNKNOWN":
-        return SurchargesStatusDTO.Unknown
+        return SurchargesStatusDTO.UNKNOWN
       case "REPORTED":
-        return SurchargesStatusDTO.Reported
+        return SurchargesStatusDTO.REPORTED
       case "CONFIRMED":
-        return SurchargesStatusDTO.Confirmed
+        return SurchargesStatusDTO.CONFIRMED
       default:
-        return SurchargesStatusDTO.Unknown
+        return SurchargesStatusDTO.UNKNOWN
     }
   }
 
