@@ -8,8 +8,8 @@ export async function GetPlaces(searchText: string, nextPageToken?: string): Pro
   const baseURL = import.meta.env.VITE_BASE_URL
 
   const requestURL = nextPageToken && nextPageToken != '' 
-  ? `${baseURL}/places?searchText=${searchText}&nextPageToken=${nextPageToken}`
-  : `${baseURL}/places?searchText=${searchText}`
+  ? `${baseURL}/api/places?searchText=${searchText}&nextPageToken=${nextPageToken}`
+  : `${baseURL}/api/places?searchText=${searchText}`
 
   const response = await fetch(requestURL, {
     method: 'GET'
