@@ -1,8 +1,9 @@
-name: Release
+name: Deploy to Development
 
 on:
-  release:
-    types: released
+  push:
+    branches:
+      - develop
 
 jobs:
   build:
@@ -21,22 +22,28 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
+      - name: Get latest tag
+        uses: actions-ecosystem/action-get-latest-tag@v1
+        id: get_latest_tag
+
       - name: Set up App Version
-        run: npm version ${{ github.event.release.tag_name }} --no-git-tag-version --allow-same-version
-        
-      - name: Generate .env.production
         run: |
-          echo "VITE_BASE_URL=${{ secrets.VITE_BASE_URL }}" >> .env.production
-          echo "VITE_GOOGLE_MAPS_JAVASCRIPT_API_KEY=${{ secrets.VITE_GOOGLE_MAPS_JAVASCRIPT_API_KEY }}" >> .env.production
-          echo "VITE_GOOGLE_MAPS_MAP_ID=${{ secrets.VITE_GOOGLE_MAPS_MAP_ID }}" >> .env.production
-          echo "VITE_FIREBASE_API_KEY=${{ secrets.VITE_FIREBASE_API_KEY }}" >> .env.production
-          echo "VITE_FIREBASE_AUTH_DOMAIN=${{ secrets.VITE_FIREBASE_AUTH_DOMAIN }}" >> .env.production
-          echo "VITE_FIREBASE_PROJECT_ID=${{ secrets.VITE_FIREBASE_PROJECT_ID }}" >> .env.production
-          echo "VITE_FIREBASE_STORAGE_BUCKET=${{ secrets.VITE_FIREBASE_STORAGE_BUCKET }}" >> .env.production
-          echo "VITE_FIREBASE_MESSAGING_SENDER_ID=${{ secrets.VITE_FIREBASE_MESSAGING_SENDER_ID }}" >> .env.production
-          echo "VITE_FIREBASE_APP_ID=${{ secrets.VITE_FIREBASE_APP_ID }}" >> .env.production
-          echo "VITE_FIREBASE_MEASUREMENT_ID=${{ secrets.VITE_FIREBASE_MEASUREMENT_ID }}" >> .env.production
-          echo "VITE_RECAPTCHA_SITE_KEY=${{ secrets.VITE_RECAPTCHA_SITE_KEY }}" >> .env.production
+          npm version ${{ tag }} --no-git-tag-version --allow-same-version
+          npm version minor --no-git-tag-version --allow-same-version
+        
+      - name: Generate .env
+        run: |
+          echo "VITE_BASE_URL=${{ secrets.VITE_BASE_URL_DEV }}" >> .env
+          echo "VITE_GOOGLE_MAPS_JAVASCRIPT_API_KEY=${{ secrets.VITE_GOOGLE_MAPS_JAVASCRIPT_API_KEY_DEV }}" >> .env
+          echo "VITE_GOOGLE_MAPS_MAP_ID=${{ secrets.VITE_GOOGLE_MAPS_MAP_ID_DEV }}" >> .env
+          echo "VITE_FIREBASE_API_KEY=${{ secrets.VITE_FIREBASE_API_KEY_DEV }}" >> .env
+          echo "VITE_FIREBASE_AUTH_DOMAIN=${{ secrets.VITE_FIREBASE_AUTH_DOMAIN_DEV }}" >> .env
+          echo "VITE_FIREBASE_PROJECT_ID=${{ secrets.VITE_FIREBASE_PROJECT_ID_DEV }}" >> .env
+          echo "VITE_FIREBASE_STORAGE_BUCKET=${{ secrets.VITE_FIREBASE_STORAGE_BUCKET_DEV }}" >> .env
+          echo "VITE_FIREBASE_MESSAGING_SENDER_ID=${{ secrets.VITE_FIREBASE_MESSAGING_SENDER_ID_DEV }}" >> .env
+          echo "VITE_FIREBASE_APP_ID=${{ secrets.VITE_FIREBASE_APP_ID_DEV }}" >> .env
+          echo "VITE_FIREBASE_MEASUREMENT_ID=${{ secrets.VITE_FIREBASE_MEASUREMENT_ID_DEV }}" >> .env
+          echo "VITE_RECAPTCHA_SITE_KEY=${{ secrets.VITE_RECAPTCHA_SITE_KEY_DEV }}" >> .env
 
       - name: Build
         run: npm run build
@@ -69,6 +76,9 @@ jobs:
         with:
           name: dist
           path: dist
+
+      - name: Select Configuration
+        run: firebase use dev
 
       - name: Deploy to Firebase Hosting
         uses: w9jds/firebase-action@master
