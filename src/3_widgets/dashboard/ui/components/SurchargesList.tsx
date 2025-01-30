@@ -30,6 +30,9 @@ const SurhcargesList: React.FC<SurhcargeListProps> = ({ searchedSurcharges, load
 		setSelectedSurcharge(null);
 	};
 
+    // useEffect(() => {
+    // }, [user]);
+
 	const confirmSurcharge = async (
 		id: string,
 		action: string,
