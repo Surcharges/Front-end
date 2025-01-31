@@ -18,6 +18,7 @@ const ConfirmationModal: React.FC<Props> = ({totalAmount, surchargeAmount, statu
   const [newTotalAmount, setNewTotalAmount] = useState('');
   const [imageBase64, setImageBase64] = useState<string | null>(null);
   const [loadingImage, setLoadingImage] = useState(false);
+  const [isTotalBiggerThatnSurcharge, setIsTotalBiggerThatnSurcharge] = useState(true);
   const { user } = useAuth();
 
   useEffect(() => {
@@ -58,26 +59,47 @@ const ConfirmationModal: React.FC<Props> = ({totalAmount, surchargeAmount, statu
     }
   }, [user, isOpen, imageName]);
 
+  const checkIfTotalBiggerThenSurcharge = (
+    newTotalAmount: string, newSurchargeAmount: string  ) => {
+    if(Number(newTotalAmount) < Number(newSurchargeAmount)){setIsTotalBiggerThatnSurcharge(false)}
+    else {setIsTotalBiggerThatnSurcharge(true)}
+  }
+
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    setFunction: (value: React.SetStateAction<string>) => void
+    setFunction: (value: React.SetStateAction<string>) => void,
   ) => {
     setFunction(e.target.value);
+    checkIfTotalBiggerThenSurcharge(newTotalAmount, newSurchargeAmount)
   };
 
   function renderContent() {
-    if (status === "REPORTED") {
-      return (
-        <>
-          <Button
-            onClick={() =>
-              onConfirm(surchargeId, "CONFIRM", Number(newSurchargeAmount), Number(newTotalAmount))
-            }
-            color="success"
-            variant="contained"
-          >
-            Confirm Surcharge
-          </Button>
+    if (isTotalBiggerThatnSurcharge){
+      if (status === "REPORTED") {
+        return (
+          <>
+            <Button
+              onClick={() =>
+                onConfirm(surchargeId, "CONFIRM", Number(newSurchargeAmount), Number(newTotalAmount))
+              }
+              color="success"
+              variant="contained"
+            >
+              Confirm Surcharge
+            </Button>
+            <Button
+              onClick={() =>
+                onConfirm(surchargeId, "REJECT", Number(newSurchargeAmount), Number(newTotalAmount))
+              }
+              color="error"
+              variant="contained"
+            >
+              Reject Surcharge
+            </Button>
+          </>
+        );
+      } else if (status === "CONFIRMED") {
+        return (
           <Button
             onClick={() =>
               onConfirm(surchargeId, "REJECT", Number(newSurchargeAmount), Number(newTotalAmount))
@@ -87,33 +109,34 @@ const ConfirmationModal: React.FC<Props> = ({totalAmount, surchargeAmount, statu
           >
             Reject Surcharge
           </Button>
-        </>
-      );
-    } else if (status === "CONFIRMED") {
+        );
+      } else if (status === "REJECTED") {
+        return (
+          <Button
+            onClick={() =>
+              onConfirm(surchargeId, "CONFIRM", Number(newSurchargeAmount), Number(newTotalAmount))
+            }
+            color="success"
+            variant="contained"
+          >
+            Confirm Surcharge
+          </Button>
+        );
+      }
+    } else {
       return (
-        <Button
-          onClick={() =>
-            onConfirm(surchargeId, "REJECT", Number(newSurchargeAmount), Number(newTotalAmount))
-          }
-          color="error"
-          variant="contained"
-        >
-          Reject Surcharge
-        </Button>
-      );
-    } else if (status === "REJECTED") {
-      return (
-        <Button
-          onClick={() =>
-            onConfirm(surchargeId, "CONFIRM", Number(newSurchargeAmount), Number(newTotalAmount))
-          }
-          color="success"
-          variant="contained"
-        >
-          Confirm Surcharge
-        </Button>
-      );
+        <Box component="span"
+        sx={{
+          backgroundColor: 'red',
+          color: 'white', // Text color for contrast
+          padding: '4px 8px', // Padding for the badge
+          borderRadius: '8px', // Rounded corners
+          fontWeight: 'bold',
+          display: 'inline-block', // Keeps the box inline
+        }}>Probably a mistake, "newSurchargeAmount" value is bigger that "newTotalAmount", please correct </Box>
+      )
     }
+    
   }
   
 
