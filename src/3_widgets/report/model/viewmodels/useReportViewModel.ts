@@ -7,10 +7,6 @@ import { useUploadStore } from "../stores/useUploadStore"
 import { UploadSurchargeInformation } from "../usecases/UploadSurchargeInformation"
 
 import { PlaceModel } from "@entities/place"
-import { PlaceUI } from "@entities/place"
-
-import { MakeAddress } from "@shared/model"
-import { SurchargesStatusModel, SurchargesStatusUI } from "@entities/surcharges"
 
 export const useReportViewModel = (initialPlaceModel: PlaceModel) => {
 
@@ -37,33 +33,8 @@ export const useReportViewModel = (initialPlaceModel: PlaceModel) => {
   const _setIsUploaded = useUploadStore((state) => state.setIsUploaded)
   const setIsError = useUploadStore((state) => state.setIsError)
 
-  const placeUI = useMemo((): PlaceUI => {
-
-    const surchargeState = () => {
-      switch (_placeModel.surcharges.status) {
-        case SurchargesStatusModel.Unknown:
-          return SurchargesStatusUI.Unknown
-        case SurchargesStatusModel.Reported:
-          return SurchargesStatusUI.Reported
-        case SurchargesStatusModel.Confirmed:
-          return SurchargesStatusUI.Confirmed
-      }
-    }
-
-    return {
-      id: _placeModel.id,
-      name: _placeModel.displayName.text,
-      address: MakeAddress(_placeModel.addressComponents),
-      location: {
-        latitude: _placeModel.location.latitude,
-        longitude: _placeModel.location.longitude
-      },
-      surcharges: {
-        status: surchargeState(),
-        rate: _placeModel.surcharges.rate,
-        reportedDate: _placeModel.surcharges.reportedDate
-      }
-    }
+  const placeName = useMemo((): string => {
+    return _placeModel.displayName.text
   },
     [_placeModel]
   )
@@ -136,7 +107,7 @@ export const useReportViewModel = (initialPlaceModel: PlaceModel) => {
   }
 
   return {
-    placeUI,
+    placeName,
     totalAmount,
     surchargeAmount,
     isUploadImageButtonLoading,

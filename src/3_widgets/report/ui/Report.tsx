@@ -59,7 +59,7 @@ export function Report() {
 
   return (
     <div className='ml-10 mr-10'>
-      <PageHeader placeName={amountsViewModel.placeUI.name} />
+      <PageHeader placeName={amountsViewModel.placeName} />
       <div className='flex flex-col items-center justify-center mt-4 gap-4'>
         <UploadButton
           loading={amountsViewModel.isUploadImageButtonLoading}
@@ -90,7 +90,7 @@ export function Report() {
       {/* When the uploading is successed. Show dimmed cover */}
       <UploadSuccess
         isUploaded={amountsViewModel.isUploaded}
-        placeName={amountsViewModel.placeUI.name}
+        placeName={amountsViewModel.placeName}
         goBack={handleBackToPlace}
       />
     </div>
