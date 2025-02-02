@@ -29,12 +29,14 @@ export async function GetPlaceDetail(id: string): Promise<PlaceDTO> {
 
   const surchargeStatus = () => {
     switch (data.surchargeStatus) {
-      case "UNKNOWN":
-        return SurchargesStatusDTO.UNKNOWN
       case "REPORTED":
         return SurchargesStatusDTO.REPORTED
       case "CONFIRMED":
         return SurchargesStatusDTO.CONFIRMED
+      case "AUTO_GENERATED":
+        return SurchargesStatusDTO.AUTO_GENERATED
+      case "REJECTED":
+        return SurchargesStatusDTO.REJECTED
       default:
         return SurchargesStatusDTO.UNKNOWN
     }
