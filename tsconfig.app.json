@@ -31,6 +31,7 @@
       "@features/*": ["src/4_features/*"],
       "@entities/*": ["src/5_entities/*"],
       "@shared/*": ["src/6_shared/*"],
+      "@assets/*": ["src/assets/*"],
     }
   },
   "include": ["src"]

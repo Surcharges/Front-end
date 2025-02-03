@@ -22,6 +22,7 @@ export default defineConfig({
       '@features': path.resolve(__dirname, 'src/4_features'),
       '@entities': path.resolve(__dirname, 'src/5_entities'),
       '@shared': path.resolve(__dirname, 'src/6_shared'),
+      '@assets': path.resolve(__dirname, 'src/assets'),
     },
   }
 })
