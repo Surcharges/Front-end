@@ -24,7 +24,7 @@ export function UploadButton(props: UploadButtonProps) {
       loading={props.loading}
       disabled={props.disabled}
     >
-      Upload
+      📸 or 🏞️
       <VisuallyHiddenInput
         type='file'
         accept='image/*'
