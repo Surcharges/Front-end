@@ -21,8 +21,6 @@ export async function GetPlaces(searchText: string, nextPageToken?: string): Pro
 
   const data = await response.json()
 
-  console.log(data)
-
   return {
     places: data.places.map((place: any): PlaceDTO => {
 
