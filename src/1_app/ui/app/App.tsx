@@ -10,6 +10,7 @@ import { DashBoard } from '@widgets/dashboard'
 import { Protected } from '@features/protected'
 import { AuthContextProvider } from '@shared/model'
 import { PrivacyPolicy } from '@widgets/privacyPolicy'
+import { Support } from '@widgets/support'
 
 const queryClient = new QueryClient()
 
@@ -26,12 +27,13 @@ export function App() {
                 <Route path="/place" element={<Detail />} />
                 <Route path="/report" element={<Report />} />
                 <Route path="/login" element={<Login />} />
+                <Route path="/privacy" element={<PrivacyPolicy />} />
+                <Route path="/support" element={<Support />} />
                 <Route path='/admin' element={
                   <Protected>
                     <DashBoard />
                   </Protected>
                 } />
-<Route path="/privacy" element={<PrivacyPolicy />} />
               </Routes>
             </BrowserRouter>
           </QueryClientProvider>
