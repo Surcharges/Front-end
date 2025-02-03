@@ -7,9 +7,9 @@ export async function GetPlaces(searchText: string, nextPageToken?: string): Pro
 
   const baseURL = import.meta.env.VITE_BASE_URL
 
-  const requestURL = nextPageToken && nextPageToken != '' 
-  ? `${baseURL}/api/places?searchText=${searchText}&nextPageToken=${nextPageToken}`
-  : `${baseURL}/api/places?searchText=${searchText}`
+  const requestURL = nextPageToken && nextPageToken != ''
+    ? `${baseURL}/api/places?searchText=${searchText}&nextPageToken=${nextPageToken}`
+    : `${baseURL}/api/places?searchText=${searchText}`
 
   const response = await fetch(requestURL, {
     method: 'GET'
@@ -21,17 +21,21 @@ export async function GetPlaces(searchText: string, nextPageToken?: string): Pro
 
   const data = await response.json()
 
+  console.log(data)
+
   return {
     places: data.places.map((place: any): PlaceDTO => {
 
       const surchargeStatus = () => {
         switch (place.surchargeStatus) {
-          case "UNKNOWN":
-            return SurchargesStatusDTO.UNKNOWN
           case "REPORTED":
             return SurchargesStatusDTO.REPORTED
           case "CONFIRMED":
             return SurchargesStatusDTO.CONFIRMED
+          case "AUTO_GENERATED":
+            return SurchargesStatusDTO.AUTO_GENERATED
+          case "REJECTED":
+            return SurchargesStatusDTO.REJECTED
           default:
             return SurchargesStatusDTO.UNKNOWN
         }
