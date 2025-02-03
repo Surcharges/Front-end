@@ -15,7 +15,7 @@ export function ErrorAlert(props: ErrorAlertProps) {
       style={{ transform: props.isError ? 'translateY(0)' : 'translateY(100%)' }}
     >
       <Alert severity='error'>
-        Opps, there's something wrong, Please try again later.
+        Opps, something went wrong, Please try again later.
       </Alert>
     </div>
   )

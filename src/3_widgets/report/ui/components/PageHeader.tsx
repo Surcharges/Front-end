@@ -10,7 +10,10 @@ export function PageHeader(props: IPageHeaderProps) {
         <p className='sm:text-5xl text-2xl font-bold text-center'>{props.placeName}</p>
       </div>
       <p className='text-center mt-10'>
-        Please upload a photo of the receipt or terminal screen📸
+        Please take or select a photo of the receipt or terminal screen for recognising surcharge information.
+      </p>
+      <p className='text-center font-bold'>
+        Please Note. When you report this information, the photo will be uploaded to the server to verify the information.
       </p>
     </div>
   )
