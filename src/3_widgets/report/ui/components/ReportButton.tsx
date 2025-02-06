@@ -21,7 +21,7 @@ export function ReportButton(props: ReportButtonProps) {
       disabled={props.disabled}
       onClick={props.onClick}
     >
-      Report
+      📝Report
     </LoadingButton>
   )
 

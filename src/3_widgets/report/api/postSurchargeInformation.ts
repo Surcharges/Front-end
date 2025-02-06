@@ -2,7 +2,7 @@ import { PostSurchargeInformationRequest } from './DTO/PostSurchargeInformationR
 
 export async function postSurchargeInformation(request: PostSurchargeInformationRequest) {
 
-  const baseURL = `${import.meta.env.VITE_BASE_URL}/surcharge`
+  const baseURL = `${import.meta.env.VITE_BASE_URL}/api/surcharge`
 
   const response = await fetch(baseURL, {
     method: 'POST',
